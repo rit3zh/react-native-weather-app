@@ -5,7 +5,11 @@
     "paths": {
       "@/*": ["./src/*"],
       "~/*": ["./src/components/*"],
-      "#/*": ["./src/constants/*"]
+      "#/*": ["./src/constants/*"],
+      "assets/*": ["./src/assets/*"],
+      "styles/*": ["./src/styles/*"],
+      "packages/*": ["./src/packages/*"],
+      "instance/*": ["./src/instance/*"]
     }
   }
 }
