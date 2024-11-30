@@ -8,16 +8,23 @@ import * as constants from "#/index";
 
 const { Navigator, Screen } = createNativeStackNavigator();
 
-export const HomeStack: React.FC<NativeStackHeaderProps> = (props) => {
+export const HomeStack: React.FC<NativeStackHeaderProps> = (
+  props: NativeStackHeaderProps
+) => {
   return (
     <Navigator
       screenOptions={{
         ...(constants.SCREEN_OPTIONS as any),
       }}
     >
-      <Screen name="HomeScreen" component={Home as any} />
+      <Screen
+        name="HomeScreen"
+        component={Home as any}
+        initialParams={props.route.params}
+      />
       <Screen
         name="SearchScreen"
+        initialParams={props.route.params}
         component={Search as any}
         options={{
           presentation: "formSheet",

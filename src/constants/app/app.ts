@@ -10,3 +10,4 @@ export const INTRO_SUBTITLE: string = `A very basic Weather app made using React
 export const ASYNC_STORAGE_KEY: string = `user`;
 export const CONTENT_UNAVAILABLE_TITLE_NO_SEARCH_HISTORY: string = `No Search History Found`;
 export const CONTENT_UNAVAILABLE_DESCRIPTION_NO_SEARCH_HISTORY: string = `Your recent searches will appear here. Start exploring to see your search history!`;
+export const COLLECTION_NAME: string = `users`;

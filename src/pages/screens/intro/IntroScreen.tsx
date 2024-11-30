@@ -6,14 +6,18 @@ import Bounceable from "@freakycoder/react-native-bounceable";
 import { setUser } from "@/core/index";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackHeaderProps } from "@react-navigation/native-stack";
+import { createUser } from "@/store";
 
 export const Intro: React.FC<NativeStackHeaderProps> = (
   props: NativeStackHeaderProps
 ) => {
   // const navigation = useNavigation();
   const onPress = async () => {
-    await setUser();
-    return props.navigation.navigate("AppStack");
+    const id = await createUser();
+    await setUser(id);
+    return props.navigation.navigate("AppStack", {
+      id: id,
+    });
   };
   return (
     <ScrollView

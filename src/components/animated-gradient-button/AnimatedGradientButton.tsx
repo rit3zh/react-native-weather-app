@@ -12,20 +12,16 @@ export const AnimatedGradientButton: React.FC<{
     <Bounceable onPress={onPress}>
       <MotiView
         className="items-center justify-center"
-        from={{
-          width: size,
-          height: size,
-          borderRadius: size / 2,
-          borderWidth: 0,
-          shadowOpacity: 0.5,
-        }}
-        animate={{
-          width: size + 20,
-          height: size + 20,
-          borderRadius: (size + 20) / 2,
-          borderWidth: size / 10,
-          shadowOpacity: 1,
-        }}
+        from={{}}
+        animate={
+          {
+            // width: size + 20,
+            // height: size + 20,
+            // borderRadius: (size + 20) / 2,
+            // borderWidth: size / 10,
+            // shadowOpacity: 1,
+          }
+        }
         transition={{
           type: "timing",
           duration: 1500,
@@ -35,7 +31,7 @@ export const AnimatedGradientButton: React.FC<{
           width: size,
           height: size,
           borderRadius: size / 2,
-          borderWidth: size / 10,
+          borderWidth: 2,
           borderColor: "#fff",
           shadowColor: "#fff",
 

@@ -11,7 +11,9 @@ import { CustomDrawerLayout } from "~/index";
 const { Navigator, Screen } = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
-export const DrawerStack: React.FC<NativeStackHeaderProps> = (props) => {
+export const DrawerStack: React.FC<NativeStackHeaderProps> = (
+  props: NativeStackHeaderProps
+) => {
   return (
     <Drawer.Navigator
       screenOptions={{
@@ -23,7 +25,11 @@ export const DrawerStack: React.FC<NativeStackHeaderProps> = (props) => {
         </React.Fragment>
       )}
     >
-      <Drawer.Screen name="HomeStack" component={HomeStack as any} />
+      <Drawer.Screen
+        name="HomeStack"
+        initialParams={props.route.params}
+        component={HomeStack as any}
+      />
     </Drawer.Navigator>
   );
 };

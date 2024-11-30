@@ -17,11 +17,11 @@ export async function getUser<T>(): Promise<string | undefined> {
   }
 }
 
-export async function setUser<T>(): Promise<boolean | void> {
+export async function setUser<T>(id: string): Promise<boolean | void> {
   try {
     await AsyncStorage.setItem(
       constants.ASYNC_STORAGE_KEY satisfies string,
-      process.env.EXPO_PUBLIC_USER_SECRET_KEY satisfies string
+      id satisfies string
     );
     return true;
   } catch (error: any | void) {

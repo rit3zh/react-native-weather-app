@@ -1,36 +1,47 @@
-import {
-  ScrollView,
-  SafeAreaView,
-  Text,
-  View,
-  FlatList,
-  Image,
-} from "react-native";
-import React, {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-} from "react";
+import { ScrollView, SafeAreaView, Text, View, Image } from "react-native";
+import React, { useLayoutEffect, useState } from "react";
 import { NativeStackHeaderProps } from "@react-navigation/native-stack";
-import BottomSheet from "@gorhom/bottom-sheet";
-import { Feather, FontAwesome6, Octicons } from "@expo/vector-icons";
+import { FontAwesome6, Octicons } from "@expo/vector-icons";
 import { weatherStyles as styles } from "styles/index";
 import Ionicons from "@expo/vector-icons/build/Ionicons";
-import LottieView from "lottie-react-native";
 import { DrawerActions } from "@react-navigation/native";
 import Bounceable from "@freakycoder/react-native-bounceable";
-import { weather as api } from "instance/index";
 import { useCurrentWeather } from "@/hooks/useCurrentWeather";
 import { AnimatedPicker, SkeletonPlaceholder } from "@/components";
 import { getFormattedDate, splitText } from "@/utilities";
 import Animated, { FadeIn } from "react-native-reanimated";
-
+import { useUser } from "@/hooks/useUser";
+import { useWeatherStore } from "@/store/index";
+import { IHookWeatherResponse } from "@/typings/weather/Weather";
+import { weather as weatherInstance } from "@/instance";
 export const Home: React.FC<NativeStackHeaderProps> = (
   props: NativeStackHeaderProps
 ) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [searchLocation, setSearchLocation] =
+    useState<IHookWeatherResponse | null>();
   const weather = useCurrentWeather();
+  const user = useUser();
+  const item = useWeatherStore((state) => state?.selectedItem);
+
+  useLayoutEffect(() => {
+    const core = async () => {
+      if (!item?.dt) return;
+      setLoading(true);
+      const weatherResponse = await weatherInstance.getCurrent({
+        coordinates: {
+          lat: item.coord.lat,
+          lon: item.coord.lon,
+        },
+        units: "metric",
+      });
+
+      setSearchLocation(weatherResponse);
+      setLoading(false);
+    };
+
+    core();
+  }, [item]);
 
   return (
     <ScrollView
@@ -40,7 +51,7 @@ export const Home: React.FC<NativeStackHeaderProps> = (
       contentInsetAdjustmentBehavior="always"
     >
       <SafeAreaView className="flex-1 bg-black">
-        {!weather ? (
+        {!weather?.astronomical || loading === true ? (
           <SkeletonPlaceholder />
         ) : (
           <React.Fragment>
@@ -60,7 +71,11 @@ export const Home: React.FC<NativeStackHeaderProps> = (
                     </View>
                   </Bounceable>
                   <Bounceable
-                    onPress={() => props.navigation.navigate("SearchScreen")}
+                    onPress={() =>
+                      props.navigation.navigate("SearchScreen", {
+                        id: user?.id as string,
+                      })
+                    }
                   >
                     <View
                       style={styles.shadow}
@@ -74,7 +89,7 @@ export const Home: React.FC<NativeStackHeaderProps> = (
                 <View className="flex-row justify-between mt-5">
                   <View className="mt-8 ml-6">
                     <Text className="text-white font-bold text-4xl">
-                      About Today
+                      {"About Today"}
                     </Text>
                   </View>
                   <View className="items-center justify-center top-4 mr-1 flex-row">
@@ -82,32 +97,23 @@ export const Home: React.FC<NativeStackHeaderProps> = (
                       <AnimatedPicker />
                     </View>
                     <View className="right-4 items-center justify-center">
-                      {splitText(weather.city || "NO location").map(
-                        (value: string, _: number) => (
-                          <View
-                            key={_.toString()}
-                            className="flex-col items-center justify-center"
+                      {splitText(
+                        searchLocation?.astronomical
+                          ? item?.name!
+                          : weather?.city || "NO location"
+                      ).map((value: string, _: number) => (
+                        <View
+                          key={_.toString()}
+                          className="flex-col items-center justify-center"
+                        >
+                          <Text
+                            className="text-white max-w-[125px]"
+                            numberOfLines={1}
                           >
-                            <Text
-                              className="text-white max-w-[125px]"
-                              numberOfLines={1}
-                            >
-                              {value}
-                            </Text>
-                          </View>
-                        )
-                      )}
-                    </View>
-
-                    <View
-                      className="w-7 h-7 rounded-full bg-[#131122] items-center justify-center"
-                      style={styles.chevron}
-                    >
-                      <Ionicons
-                        name="chevron-down-sharp"
-                        size={13}
-                        color="white"
-                      />
+                            {value}
+                          </Text>
+                        </View>
+                      ))}
                     </View>
                   </View>
                 </View>
@@ -120,7 +126,9 @@ export const Home: React.FC<NativeStackHeaderProps> = (
                 >
                   <Image
                     source={{
-                      uri: weather.weather?.icon.url.replace("2x", "4x"),
+                      uri: searchLocation?.astronomical
+                        ? searchLocation.weather.icon.url?.replace("2x", "4x")
+                        : weather.weather?.icon.url.replace("2x", "4x"),
                     }}
                     style={{
                       width: 220,
@@ -143,7 +151,10 @@ export const Home: React.FC<NativeStackHeaderProps> = (
                   style={styles.lottieShadow}
                 >
                   <Text className="text-gray-300 text-8xl font-extrabold">
-                    {weather.weather?.temp.cur}°
+                    {searchLocation?.astronomical
+                      ? searchLocation.weather.temp.cur
+                      : weather.weather?.temp.cur}
+                    °
                   </Text>
                 </View>
 
@@ -160,7 +171,10 @@ export const Home: React.FC<NativeStackHeaderProps> = (
                         <View className="items-center justify-center">
                           <Text className="text-white font-bold text-[18px] mt-5">
                             {" "}
-                            {weather.weather?.rain}%
+                            {searchLocation?.astronomical
+                              ? searchLocation?.weather?.rain
+                              : weather.weather?.rain}
+                            %
                           </Text>
                           <Text className="text-[#d4d4d4] mt-2">Rain</Text>
                         </View>
@@ -178,7 +192,10 @@ export const Home: React.FC<NativeStackHeaderProps> = (
                         </View>
                         <View className="items-center justify-center">
                           <Text className="text-white font-bold text-[18px] mt-5">
-                            {weather.weather?.wind.speed} km/h
+                            {searchLocation?.astronomical
+                              ? searchLocation?.weather?.wind?.speed
+                              : weather.weather?.wind.speed}
+                            km/h
                           </Text>
                           <Text className="text-[#d4d4d4] mt-2">Wind</Text>
                         </View>
@@ -196,7 +213,10 @@ export const Home: React.FC<NativeStackHeaderProps> = (
                         </View>
                         <View className="items-center justify-center">
                           <Text className="text-white font-bold text-[18px] mt-5">
-                            {weather.weather?.humidity}%
+                            {searchLocation?.astronomical
+                              ? searchLocation?.weather?.humidity
+                              : weather.weather?.humidity}
+                            %
                           </Text>
                           <Text className="text-[#d4d4d4] mt-2">Humidity</Text>
                         </View>

@@ -1,9 +1,9 @@
 import { View, ScrollView, SafeAreaView } from "react-native";
-import React, { useLayoutEffect, useState, useEffect } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { NativeStackHeaderProps } from "@react-navigation/native-stack";
 import { AnimatedSuggestions } from "@/components/animated-suggestions/AnimatedSuggestions";
 import { search } from "@/helpers/search";
-import { SearchList } from "@/typings/search/SearchWeather";
+import { type List, SearchList } from "@/typings/search/SearchWeather";
 import { ContentUnavailableView } from "@/components/content-unavaliable/ContentUnavailableView";
 import { Entypo } from "@expo/vector-icons";
 import Animated, {
@@ -11,20 +11,25 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
+import { updateUser } from "@/store";
+import { Timestamp } from "firebase/firestore";
+import { useUser } from "@/hooks/useUser";
+import { useWeatherStore } from "@/store/zustand";
 
 export const Search:
   | React.FC<NativeStackHeaderProps>
   | React.FunctionComponent<NativeStackHeaderProps> = (
   props: NativeStackHeaderProps
 ): React.ReactNode & React.JSX.Element => {
+  const setSelectedItem = useWeatherStore((state) => state.setSelectedItem);
+
   const [text, setText] = useState<string>();
   const [locations, setLocations] = useState<SearchList>();
   const fadeOpacity = useSharedValue(1);
 
-  const onButtonPress = () => {
-    alert("Hello world");
-  };
-
+  const params = props.route.params as any;
+  const id = params?.id;
+  const user = useUser();
   useLayoutEffect(() => {
     props.navigation.setOptions({
       headerSearchBarOptions: {
@@ -59,6 +64,19 @@ export const Search:
     opacity: fadeOpacity.value,
   }));
 
+  const onPress = async (item: List) => {
+    setSelectedItem(item);
+    updateUser(id, {
+      history: [
+        ...user?.history!,
+        {
+          date: Timestamp.now(),
+          query: `${item.sys.country}, ${item.name}`,
+        },
+      ],
+    });
+  };
+
   return (
     <ScrollView
       className="flex-1"
@@ -69,7 +87,7 @@ export const Search:
         {text ? (
           <AnimatedSuggestions
             response={locations!}
-            onPress={(item) => alert(item.name)}
+            onPress={(item) => onPress(item)}
           />
         ) : (
           <Animated.View style={[animatedStyle]}>

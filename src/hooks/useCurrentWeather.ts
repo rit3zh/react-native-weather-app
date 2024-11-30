@@ -1,17 +1,12 @@
 import { weather } from "@/instance";
 import { useState, useLayoutEffect } from "react";
-import type { CurrentWeather } from "@/packages";
 
 import { getCurrentIPAddressInformation } from "@/helpers/getCurrentIPInformation";
+import { IHookWeatherResponse } from "@/typings/weather/Weather";
 
-interface IHookWeatherResponse extends CurrentWeather {
-  city?: string;
-  region?: string;
-}
-
-export function useCurrentWeather(interval?: any) {
+export function useCurrentWeather(locationName?: string) {
   const [currentWeather, setCurrentWeather] =
-    useState<IHookWeatherResponse | null>(null);
+    useState<IHookWeatherResponse | null>();
   const [error, setError] = useState<string | null>(null);
 
   useLayoutEffect(() => {
