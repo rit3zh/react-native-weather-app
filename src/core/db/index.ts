@@ -2,13 +2,13 @@ import { initializeApp, FirebaseOptions } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig: FirebaseOptions = {
-  apiKey: "AIzaSyCv2kd7F_JclStMu4tsHbEDQySB33n9s8M",
-  authDomain: "weatherappios-ddab4.firebaseapp.com",
-  projectId: "weatherappios-ddab4",
-  storageBucket: "weatherappios-ddab4.firebasestorage.app",
-  messagingSenderId: "664971099305",
-  appId: "1:664971099305:web:29ffc5fe70a4c277547db8",
-  measurementId: "G-VHFL0BB54R",
+  apiKey: "<YOUR_API_KEY>",
+  authDomain: "<YOUR_AUTH_DOMAIN>",
+  projectId: "<YOUR_PROJECT_ID>",
+  storageBucket: "<YOUR_STORAGE_BUCKET>",
+  messagingSenderId: "<YOUR_MESSAGING_SENDER_ID>",
+  appId: "<YOUR_APP_ID>",
+  measurementId: "<YOUR_MEASUREMENT_ID>",
 };
 
 export const app = initializeApp(firebaseConfig);
