@@ -52,8 +52,8 @@ export const CustomDrawerLayout: React.FC<DrawerContentComponentProps> = (
               <View className="h-[0.2px] w-full bg-gray-600 mx-5 left-[0px]" />
             )}
             data={user.history}
-            keyExtractor={(key, index) => index.toString()}
-            renderItem={({ item, index }) => {
+            keyExtractor={(_, index) => index.toString()}
+            renderItem={({ item }: any) => {
               const firestoreDate = new Date(
                 item.date?.seconds * 1000 + item?.date?.nanoseconds / 1000000
               );

@@ -26,7 +26,7 @@ export const Search:
   const [text, setText] = useState<string>();
   const [locations, setLocations] = useState<SearchList>();
   const fadeOpacity = useSharedValue(1);
-
+  const [noResult, setNoResult] = useState<boolean>(false);
   const params = props.route.params as any;
   const id = params?.id;
   const user = useUser();
@@ -45,9 +45,9 @@ export const Search:
           const searchAllLocations = await search(
             event.nativeEvent.text as string
           );
-
-          console.log(searchAllLocations, "res");
           setLocations(searchAllLocations);
+
+          setNoResult(!searchAllLocations?.list?.length);
         },
       },
     });
@@ -56,8 +56,10 @@ export const Search:
   useLayoutEffect(() => {
     if (!text || text === "") {
       setLocations(undefined);
-      // fadeOpacity.value = withTiming(0, { duration: 300 });
+      setNoResult(false);
+      fadeOpacity.value = withTiming(1, { duration: 300 });
     }
+    setNoResult(false);
   }, [text]);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -85,10 +87,24 @@ export const Search:
     >
       <SafeAreaView className="flex-1">
         {text ? (
-          <AnimatedSuggestions
-            response={locations!}
-            onPress={(item) => onPress(item)}
-          />
+          noResult ? (
+            <View className="mt-10">
+              <ContentUnavailableView
+                title="No Result Found"
+                textSize={25}
+                description={`No result found for "${text}"`}
+                descriptionSize={19}
+                renderIcon={() => (
+                  <Entypo name="magnifying-glass" size={40} color="white" />
+                )}
+              />
+            </View>
+          ) : (
+            <AnimatedSuggestions
+              response={locations!}
+              onPress={(item) => onPress(item)}
+            />
+          )
         ) : (
           <Animated.View style={[animatedStyle]}>
             <View className="mt-10">

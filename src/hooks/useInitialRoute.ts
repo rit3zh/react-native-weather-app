@@ -12,7 +12,7 @@ export const useInitialRoute = () => {
         await SplashScreen.preventAutoHideAsync();
 
         const user = await getUser();
-        console.log(user, "user");
+
         setInitialRoute(user ? "AppStack" : "IntroStack");
       } catch (error) {
         console.error("Error determining initial route:", error);

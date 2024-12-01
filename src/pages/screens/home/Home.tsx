@@ -14,6 +14,7 @@ import { useUser } from "@/hooks/useUser";
 import { useWeatherStore } from "@/store/index";
 import { IHookWeatherResponse } from "@/typings/weather/Weather";
 import { weather as weatherInstance } from "@/instance";
+import { image } from "@/modifiers/cdn+modify";
 export const Home: React.FC<NativeStackHeaderProps> = (
   props: NativeStackHeaderProps
 ) => {
@@ -37,7 +38,8 @@ export const Home: React.FC<NativeStackHeaderProps> = (
       });
 
       setSearchLocation(weatherResponse);
-      setLoading(false);
+
+      setInterval(() => setLoading(false), 1500);
     };
 
     core();
@@ -125,14 +127,53 @@ export const Home: React.FC<NativeStackHeaderProps> = (
                   className="items-center justify-center mr-5"
                 >
                   <Image
-                    source={{
-                      uri: searchLocation?.astronomical
-                        ? searchLocation.weather.icon.url?.replace("2x", "4x")
-                        : weather.weather?.icon.url.replace("2x", "4x"),
-                    }}
+                    source={
+                      searchLocation?.weather?.icon?.raw === "01d"
+                        ? require("assets/clear_day.png")
+                        : searchLocation?.weather?.icon?.raw === "01n"
+                        ? require("assets/clear_night.png")
+                        : weather?.weather?.icon?.raw === "01d" &&
+                          searchLocation?.dtRaw === undefined
+                        ? require("assets/clear_day.png")
+                        : weather?.weather?.icon?.raw === "01n" &&
+                          searchLocation?.dtRaw === undefined
+                        ? require("assets/clear_night.png")
+                        : {
+                            uri: searchLocation?.astronomical
+                              ? searchLocation.weather.icon.url?.replace(
+                                  "2x",
+                                  "4x"
+                                )
+                              : weather.weather?.icon?.url.replace("2x", "4x"),
+                          }
+                    }
                     style={{
-                      width: 220,
-                      height: 250,
+                      width:
+                        searchLocation?.weather?.icon?.raw === "01n" ||
+                        weather?.weather?.icon?.raw === "01n"
+                          ? 190
+                          : 220,
+                      height:
+                        searchLocation?.weather?.icon?.raw === "01n" ||
+                        weather?.weather?.icon?.raw === "01n"
+                          ? 190
+                          : 250,
+                      marginBottom:
+                        searchLocation?.weather?.icon?.raw === "01n" ||
+                        weather?.weather?.icon?.raw === "01n"
+                          ? 40
+                          : searchLocation?.weather?.icon?.raw === "01d" ||
+                            weather?.weather?.icon?.raw === "01d"
+                          ? 0
+                          : 0,
+                      marginTop:
+                        searchLocation?.weather?.icon?.raw === "01n" ||
+                        weather?.weather?.icon?.raw === "01n"
+                          ? 30
+                          : searchLocation?.weather?.icon?.raw === "01d" ||
+                            weather?.weather?.icon?.raw === "01d"
+                          ? 0
+                          : 0,
                     }}
                   />
                 </View>
