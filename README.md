@@ -62,15 +62,12 @@
 | <img width="1604" alt="screen shot 2017-08-07 at 12 18 15 pm" src="./assets/intro.png"> |  <img width="1604" alt="screen shot 2017-08-07 at 12 18 15 pm" src="./assets/ss1.png">  | <img width="1604" alt="screen shot 2017-08-07 at 12 18 15 pm" src="./assets/recent_ss.png"> |
 | <img width="1604" alt="screen shot 2017-08-07 at 12 18 15 pm" src="./assets/japan.png"> | <img width="1604" alt="screen shot 2017-08-07 at 12 18 15 pm" src="./assets/state.png"> |  <img width="1604" alt="screen shot 2017-08-07 at 12 18 15 pm" src="./assets/search.png">   |
 
-Here's the updated section with a placeholder for the Firebase configuration:
 
 ## How to Use the App 🚀
 
 To get started with the WeatherApp, follow these steps:
 
 1. **Clone the Repository**  
-   Clone the app's source code:
-
    ```bash
    git clone https://github.com/rit3zh/react-native-weather-app
    cd react-native-weather-app
